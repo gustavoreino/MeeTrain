@@ -10,36 +10,41 @@ gaze = GazeTracking()
 webcam = cv2.VideoCapture(0)
 
 while True:
-    # We get a new frame from the webcam
-    _, frame = webcam.read()
+    try:
 
-    # We send this frame to GazeTracking to analyze it
-    gaze.refresh(frame)
+        # We get a new frame from the webcam
+        _, frame = webcam.read()
 
-    frame = gaze.annotated_frame()
-    text = ""
+        # We send this frame to GazeTracking to analyze it
+        gaze.refresh(frame)
 
-    if gaze.is_blinking():
-        text = "Pisca"
-    elif gaze.is_right():
-        text = "Pare de olhar pra direita"
-    elif gaze.is_left():
-        text = "Pare de olhar pra direita"
-    elif gaze.is_center():
-        text = "Tá certo"
-    else:
-        text = "OLHA DIREITO IDIOTA"
+        frame = gaze.annotated_frame()
+        text = ""
 
-    cv2.putText(frame, text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, (147, 58, 31), 2)
+        if gaze.is_blinking():
+            text = "Blinking"
+        elif gaze.is_right():
+            text = "Right"
+        elif gaze.is_left():
+            text = "Left"
+        elif gaze.is_center():
+            text = "Center"
+        else:
+            text = "Missing"
 
-    left_pupil = gaze.pupil_left_coords()
-    right_pupil = gaze.pupil_right_coords()
-    cv2.putText(frame, "Left pupil:  " + str(left_pupil), (90, 130), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
-    cv2.putText(frame, "Right pupil: " + str(right_pupil), (90, 165), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
+        cv2.putText(frame, text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, (147, 58, 31), 2)
 
-    cv2.imshow("Demo", frame)
+        left_pupil = gaze.pupil_left_coords()
+        right_pupil = gaze.pupil_right_coords()
+        cv2.putText(frame, "Left pupil:  " + str(left_pupil), (90, 130), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
+        cv2.putText(frame, "Right pupil: " + str(right_pupil), (90, 165), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
 
-    if cv2.waitKey(1) == 27:
+        cv2.imshow("Demo", frame)
+
+        if cv2.waitKey(1) == 27:
+            break
+    except KeyboardInterrupt:
+        print("Exiting...")
         break
    
 webcam.release()
